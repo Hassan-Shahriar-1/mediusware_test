@@ -2108,6 +2108,7 @@ __webpack_require__.r(__webpack_exports__);
         product_variant: this.product_variant,
         product_variant_prices: this.product_variant_prices
       };
+      //console.log('img',this.$refs.myVueDropzone.processQueue())
       axios.post('/product', product).then(function (response) {
         console.log(response.data);
       })["catch"](function (error) {

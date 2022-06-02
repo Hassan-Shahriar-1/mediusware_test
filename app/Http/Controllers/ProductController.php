@@ -10,6 +10,12 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+        
+    }
     /**
      * Display a listing of the resource.
      *
@@ -39,6 +45,50 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+  /////////////////product implimentation///////////////////////
+       $product=[];
+       $product['title']=$request->title;
+       $product['sku']=$request->sku;
+       $product['description']=$request->description;
+       $product_insert=Product::create($product);
+/////////////// product part end here/////////////////////
+
+
+//////////////product variant start from here/////////////////
+       if(!empty($request['product_variant'])){
+           foreach($request['product_variant'] as $key=>$val){
+                foreach($val['tags'] as $k=>$v){
+                    $product_varients[]=['variant'=>$v,'variant_id'=>$val['option'],'product_id'=>$product_insert->id];
+
+                }
+                
+           }
+           $varient_insert=ProductVariant::insert($product_varients);
+       }
+
+//////////////product variant end here/////////////////
+
+/////////////////variant price implimnet////////////////////
+       if(!empty($request['product_variant_prices'])){
+           foreach($request['product_variant_prices'] as $vrkey=>$vrval){
+              
+               $data=array(explode('/',$vrval['title']));
+               
+                foreach($data as $k=>$v){
+                    if($v!='' or $v!=null){
+                        $varint[]=ProductVariant::select('id')->where('variant',$v)->where('product_id',$product_insert->id)->first();
+                    }
+
+                }
+                $product_varient_price[]=['product_id'=>$product_insert->id,'product_variant_one'=>$varint[0],'product_variant_two'=>$varint[1],'product_variant_one'=>$varint[2],'stock'=>$vrval['stock'],'price'=>$vrval['price']];
+           }
+       }
+
+/////////////////variant price implimnet end here////////////////////
+       
+
+       
+      return $request->all();
 
     }
 
@@ -87,5 +137,11 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         //
+    }
+
+
+    public function all(){/////////getting all product by grouping for product list page
+        $list=Product::where('id',1)->first();
+       // dd($list);
     }
 }
