@@ -16,8 +16,14 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return redirect()->to('/login');
 });
+/* Auth::routes(); */
 
-Auth::routes();
+Route::get('/login','my_login@page');
+Route::post('/check/login','my_login@login')->name('login');
+Route::get('/reset/password','my_login@reset')->name('password.request');
+Route::get('/reset','my_login@register')->name('register');
+Route::post('/logout','my_login@logout')->name('logout');
+Route::post('/change/password','my_login@reset_password')->name('password.update');
 
 Route::get('/home', 'HomeController@index')->name('home');
 
