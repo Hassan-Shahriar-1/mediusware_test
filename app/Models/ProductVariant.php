@@ -7,4 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class ProductVariant extends Model
 {
 
+    public $timestemps=true;
 }

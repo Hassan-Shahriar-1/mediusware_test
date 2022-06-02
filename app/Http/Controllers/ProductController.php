@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\ProductVariantPrice;
 use App\Models\Variant;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -39,7 +40,90 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        $product=[];$product_variant=[];$product_Variant_price=[];
+        /////////product insert inmlimentation////////
+        $product['title']=$request->title;
+        $product['sku']=$request->sku;
+        $product['description']=$request->description;
+        $insert_product=Product::create($product);
+        //////////product insert end here//////////
+        ///////////product varienan implimentation start from here/////////
+        if(!empty($request['product_variant'])){
+            foreach($request['product_variant'] as $key=>$val){
+                if(!empty($val['tags'])){
 
+                    foreach($val['tags'] as $tgkey=>$tgval){
+                        $data[]=['variant'=>$tgval,'variant_id'=>$val['option'],'product_id'=>$insert_product->id,'created_at'=>Carbon::now()];
+                    }
+
+                }
+            }
+            $insert_product_variant=ProductVariant::insert($data);
+        }
+        /////////product varient implimentation end here////////////
+
+        ///////////product price implimentation start from here//////////////
+
+        if($request['product_variant_prices']){
+            foreach($request['product_variant_prices'] as $pkey=>$pval){
+                $product_var=explode('/',$pval['title']);
+               //return $product_var;
+                foreach($product_var as $pv_key=>$pv_val){
+                    if($pv_val!=null){
+                        $variant_price= ProductVariant::select('id','variant_id')->where('variant',$pv_val)->where('product_id',$insert_product->id)->first();
+                        /* if($variant_price->variant_id){ */
+
+                        
+                            switch($variant_price->variant_id){
+                                case '1':
+                                    $variant_info[1]=$variant_price->id;
+                                    break;
+                                case '2':
+                                    $variant_info[2]=$variant_price->id;
+                                    break;
+                                case 6:
+                                    $variant_info[6]=$variant_price->id;
+                                    break;
+                            }
+                        /* }else{
+                            return 'not working';
+                        } */
+                        
+                    }
+                    
+                    
+                   
+                    
+                  
+                
+                }
+                if(isset($variant_info[1])){
+                    $one=$variant_info[1];
+                }else{
+                    $one=null;
+                }
+                if(isset($variant_info[2])){
+                    $two=$variant_info[2];
+                }else{
+                    $two=null;
+                }
+                if(isset($variant_info[6])){
+                    $three=$variant_info[6];
+                }else{
+                    $three=null;
+                }
+                $variant_price_data[]=['product_id'=>$insert_product->id,'product_variant_one'=>$one,'product_variant_two'=>$two,'product_variant_three'=>$three,'stock'=>$pval['stock'],'price'=>$pval['price']];
+                $variant_info=[];
+               // return $variant_info;
+                
+            }
+            ProductVariantPrice::insert($variant_price_data);
+        }
+        return response()->json($variant_price_data);
+        
+
+        //return $insert_product_variant;
+        //return $request->all();
     }
 
 
