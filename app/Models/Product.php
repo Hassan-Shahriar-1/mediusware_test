@@ -11,7 +11,7 @@ class Product extends Model
         'title', 'sku', 'description'
     ];
 
-    public function varient(){
+    public function variant(){
         return $this->hasMany(ProductVariant::class,'product_id','id');
     }
 

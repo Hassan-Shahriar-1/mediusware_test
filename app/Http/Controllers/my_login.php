@@ -2,86 +2,56 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+
 class my_login extends Controller
 {
-
-    public function page(){
+    public function login_page(){
         return view('auth.login');
     }
-    public function login(Request $request){
 
-        $this->validate($request, [
-            'email'=> 'required|max:255|email',
-            
-        ]);
-        $credentials = [
-            'email' => $request['email'],
-            'password' => $request['password'],
-        ];
-        //dd($credentials);
-//dd(Hash::make($request->password));
-       $check_user=User::where('email',$request['email'])->where('password',Hash::check($request->password,'password'))->first();
-       //dd($check_user);
-       if($check_user==true){
-           auth()->attempt($credentials);
+    public function login(Request $request){
+        $login_check=User::where('email',$request['email'])->where('password',Hash::check($request['password'],'password'))->first();
+        if($login_check){
+            auth()->attempt(['email'=>$request['email'],'password'=>$request['password']]);
             return redirect('/home');
 
-       }else{
-           return redirect()->to('/login');
-       }
-
-
-    }
-
-    public function reset(){
-        return view('auth.passwords.reset');
-    }
-
-
-    public function reset_password(Request $request){
-
-        $this->validate($request,[
-            'email'=> 'required|max:255|email',
-            'password' => 'required|min:8'
-        ]);
-
-        $chking_user=User::where('email',$request['email'])->first();
-        if($chking_user==true){
-            if($request['password']==$request['password_confirmation']){
-                $chking_user->password=bcrypt($request['password']);
-                $chking_user->save();
-                auth()->attempt(['email'=>$request['email'],'password'=>$request['password']]);
-                return redirect('/home');
-            }else{
-                return redirect()->back()->withErrors([
-                    'error' => 'Password Not matched',
-                ]);
-            }
-
         }else{
-            return redirect()->back()->withErrors([
-                'error' => 'Account Not found',
-            ]);
+            return back()->withErrors(['login'=>'Email Or password Wrong']);
         }
-
-
-    }
-
-    public function register(Request $request){
-
     }
 
     public function logout(){
-        $user=Auth::user();
-        if($user){
+        if(Auth::user()){
             auth()->logout();
-            return redirect('/');
+            
+        }
+        return redirect('/');
+    }
+
+    public function password_change_page(){
+        return view('auth.passwords.reset');
+    }
+
+    public function password_change(Request $request){
+        if($request['password']==$request['password_confirmation']){
+           $check_user= User::where('email',$request['email'])->first();
+
+           if($check_user){
+               $check_user->password=bcrypt($request['password']);
+               $check_user->save();
+               auth()->attempt(['email'=>$request['email'],'password'=>$request['password']]);
+               return redirect('/home');
+
+           }else{
+               return back()->withErrors(['email'=>'No User Found']);
+           }
+
         }else{
-            return redirect('/');
+            return back()->withErrors(['password'=>'Password doesnt match']);
         }
     }
 }

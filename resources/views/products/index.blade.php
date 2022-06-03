@@ -11,10 +11,10 @@
         <form action="" method="get" class="card-header">
             <div class="form-row justify-content-between">
                 <div class="col-md-2">
-                    <input type="text" name="title" placeholder="Product Title" class="form-control">
+                    <input type="text" name="title" id="title" placeholder="Product Title" class="form-control">
                 </div>
                 <div class="col-md-2">
-                    <select name="variant" id="" class="form-control">
+                    <select name="variant" id="variant" class="form-control">
 
                     </select>
                 </div>
@@ -24,15 +24,15 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">Price Range</span>
                         </div>
-                        <input type="text" name="price_from" aria-label="First name" placeholder="From" class="form-control">
-                        <input type="text" name="price_to" aria-label="Last name" placeholder="To" class="form-control">
+                        <input type="text" name="price_from" aria-label="First name" id="low" placeholder="From" class="form-control">
+                        <input type="text" name="price_to" aria-label="Last name" id="high" placeholder="To" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-2">
                     <input type="date" name="date" placeholder="Date" class="form-control">
                 </div>
                 <div class="col-md-1">
-                    <button type="submit" class="btn btn-primary float-right"><i class="fa fa-search"></i></button>
+                    <button type="submit" onclick="filter()" class="btn btn-primary float-right"><i class="fa fa-search"></i></button>
                 </div>
             </div>
         </form>
@@ -51,11 +51,14 @@
                     </thead>
 
                     <tbody>
-
+                        <?php $sl=0;?>
+                    @foreach ($data as $key=>$val )
+                        @php $sl++;@endphp
+                    
                     <tr>
-                        <td>1</td>
-                        <td>T-Shirt <br> Created at : 25-Aug-2020</td>
-                        <td>Quality product in low cost</td>
+                        <td>{{$sl}}</td>
+                        <td>{{$val['title']}} <br> Created at : {{$val['created_at']}}</td>
+                        <td>{{$val['description']}}</td>
                         <td>
                             <dl class="row mb-0" style="height: 80px; overflow: hidden" id="variant">
 
@@ -73,11 +76,12 @@
                         </td>
                         <td>
                             <div class="btn-group btn-group-sm">
-                                <a href="{{ route('product.edit', 1) }}" class="btn btn-success">Edit</a>
+                                <a href="{{ route('product.edit', $val['id']) }}" class="btn btn-success">Edit</a>
                             </div>
                         </td>
                     </tr>
-
+                    @endforeach
+                        
                     </tbody>
 
                 </table>
@@ -90,11 +94,18 @@
                 <div class="col-md-6">
                     <p>Showing 1 to 10 out of 100</p>
                 </div>
-                <div class="col-md-2">
-
+                <div class="col-md-3">
+                    {{$data->links()}}
                 </div>
             </div>
         </div>
     </div>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 @endsection
+<script>
+var data={!!json_encode($data->toArray())!!}
+function filter(){
+    var title=$('#title').val();
+    console.log(search=data.filter(function(title){
+ 
+</script>
