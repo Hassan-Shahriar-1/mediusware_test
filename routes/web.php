@@ -14,10 +14,15 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return redirect()->to('/login');
+    return redirect()->to('/login/page');
 });
 
-Auth::routes();
+/* Auth::routes(); */
+Route::get('/login/page','my_login@login_page');
+Route::post('/login','my_login@login')->name('login');
+ROute::post('/logout','my_login@logout')->name('logout');
+Route::get('/reset/password','my_login@password_change_page')->name('reset');
+Route::post('/reset','my_login@password_change')->name('password.reset');
 
 Route::get('/home', 'HomeController@index')->name('home');
 
@@ -26,4 +31,6 @@ Route::middleware('auth')->group(function () {
     Route::resource('product', 'ProductController');
     Route::resource('blog', 'BlogController');
     Route::resource('blog-category', 'BlogCategoryController');
+    
 });
+//Route::get('/product/list','Controller@listofdata');

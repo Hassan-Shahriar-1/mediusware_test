@@ -8,9 +8,10 @@ use App\Models\ProductVariantPrice;
 use App\Models\Variant;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
 class ProductController extends Controller
 {
+    
     /**
      * Display a listing of the resource.
      *
@@ -18,7 +19,16 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return view('products.index');
+        
+            $data=Product::paginate(3);
+            
+            
+            //echo $data;
+            $product_price=ProductVariantPrice::select("*", DB::raw("count(*) as user_count"))->groupBy('product_id')->get();
+            dd($product_price);
+            //return response()->json([$data->variant,'data'=>$product_price]);
+        
+            return view('products.index',compact('data'));
     }
 
     /**
@@ -126,6 +136,8 @@ class ProductController extends Controller
         //return $request->all();
     }
 
+    
+
 
     /**
      * Display the specified resource.
@@ -146,8 +158,10 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
+        $product_variant=ProductVariant::where('product_id',$product->id)->get();
+        $product_Variant_price=ProductVariantPrice::where('product_id',$product->id)->get();
         $variants = Variant::all();
-        return view('products.edit', compact('variants'));
+        return view('products.edit', compact(['variants','product','product_variant','product_variant_price']));
     }
 
     /**
@@ -171,5 +185,13 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         //
+    }
+
+
+    public function listofdata(){
+        $data=Product::where('id',1)->first();
+        dd($data);
+        //echo $data;
+        return response()->json($data);
     }
 }

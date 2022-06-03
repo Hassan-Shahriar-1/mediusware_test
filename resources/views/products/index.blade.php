@@ -51,11 +51,14 @@
                     </thead>
 
                     <tbody>
-
+                        <?php $sl=0;?>
+                    @foreach ($data as $key=>$val )
+                        @php $sl++;@endphp
+                    
                     <tr>
-                        <td>1</td>
-                        <td>T-Shirt <br> Created at : 25-Aug-2020</td>
-                        <td>Quality product in low cost</td>
+                        <td>{{$sl}}</td>
+                        <td>{{$val['title']}} <br> Created at : {{$val['created_at']}}</td>
+                        <td>{{$val['description']}}</td>
                         <td>
                             <dl class="row mb-0" style="height: 80px; overflow: hidden" id="variant">
 
@@ -73,11 +76,12 @@
                         </td>
                         <td>
                             <div class="btn-group btn-group-sm">
-                                <a href="{{ route('product.edit', 1) }}" class="btn btn-success">Edit</a>
+                                <a href="{{ route('product.edit', $val['id']) }}" class="btn btn-success">Edit</a>
                             </div>
                         </td>
                     </tr>
-
+                    @endforeach
+                        
                     </tbody>
 
                 </table>
@@ -90,8 +94,8 @@
                 <div class="col-md-6">
                     <p>Showing 1 to 10 out of 100</p>
                 </div>
-                <div class="col-md-2">
-
+                <div class="col-md-3">
+                    {{$data->links()}}
                 </div>
             </div>
         </div>
