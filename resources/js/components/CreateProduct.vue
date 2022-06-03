@@ -133,6 +133,9 @@ export default {
             }
         }
     },
+    created(){
+        console.log(this.props)
+    }
     methods: {
         // it will push a new object into product variant
         newVariant() {

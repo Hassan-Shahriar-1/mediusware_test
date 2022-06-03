@@ -24,8 +24,8 @@ class ProductController extends Controller
             
             
             //echo $data;
-            $product_price=ProductVariantPrice::select("*", DB::raw("count(*) as user_count"))->groupBy('product_id')->get();
-            dd($product_price);
+            //$product_price=ProductVariantPrice::select("*", DB::raw("count(*) as user_count"))->groupBy('product_id')->get();
+            //dd($product_price);
             //return response()->json([$data->variant,'data'=>$product_price]);
         
             return view('products.index',compact('data'));
@@ -160,8 +160,11 @@ class ProductController extends Controller
     {
         $product_variant=ProductVariant::where('product_id',$product->id)->get();
         $product_Variant_price=ProductVariantPrice::where('product_id',$product->id)->get();
+        //dd($product_Variant_price);
+       
         $variants = Variant::all();
-        return view('products.edit', compact(['variants','product','product_variant','product_variant_price']));
+        $finaldata=['variant'=>$variants,'product'=>$product,'product_variant'=>$product_variant,'product_variant_price'=>$product_Variant_price];
+        return view('products.edit', compact('variants'));
     }
 
     /**
