@@ -133,9 +133,13 @@ export default {
             }
         }
     },
-    created(){
-        console.log(this.props)
-    }
+    beforeCreate  (){
+        if(this.$router.params){
+            console.log('ok');
+        }else{
+            console.log('notfound');
+        }
+    },
     methods: {
         // it will push a new object into product variant
         newVariant() {
@@ -203,8 +207,7 @@ export default {
 
 
     },
-    mounted() {
-        console.log('Component mounted.')
-    }
+    
+
 }
 </script>

@@ -8,14 +8,15 @@
 
 
     <div class="card">
-        <form action="" method="get" class="card-header">
+        <form action="/filter" method="get" class="card-header">
             <div class="form-row justify-content-between">
                 <div class="col-md-2">
                     <input type="text" name="title" id="title" placeholder="Product Title" class="form-control">
                 </div>
                 <div class="col-md-2">
                     <select name="variant" id="variant" class="form-control">
-
+                        
+                        
                     </select>
                 </div>
 
@@ -61,14 +62,19 @@
                         <td>{{$val['description']}}</td>
                         <td>
                             <dl class="row mb-0" style="height: 80px; overflow: hidden" id="variant">
-
+                                @foreach ($val['grp'] as $pkey=>$pval )
+                                
+                                    
+                                
                                 <dt class="col-sm-3 pb-0">
-                                    SM/ Red/ V-Nick
+                                    {{$pval['name']}}
                                 </dt>
+                              
                                 <dd class="col-sm-9">
-                                    <dl class="row mb-0">
-                                        <dt class="col-sm-4 pb-0">Price : {{ number_format(200,2) }}</dt>
-                                        <dd class="col-sm-8 pb-0">InStock : {{ number_format(50,2) }}</dd>
+                                    <dl class="row mb-0">                                       
+                                        <dt class="col-sm-4 pb-0">Price : {{ $pval['price'] }}</dt>
+                                        <dd class="col-sm-8 pb-0">InStock : {{ $pval['stock'] }}</dd>
+                                        @endforeach
                                     </dl>
                                 </dd>
                             </dl>
@@ -92,10 +98,13 @@
         <div class="card-footer">
             <div class="row justify-content-between">
                 <div class="col-md-6">
-                    <p>Showing 1 to 10 out of 100</p>
+                    <p>Showing {{ $data->firstItem('vendor.pagination.bootstrap-4') }} to {{ $data->lastItem('vendor.pagination.bootstrap-4') }}
+                        of total {{$data->total('vendor.pagination.bootstrap-4')}} entries
+                        </p>
+                    
                 </div>
                 <div class="col-md-3">
-                    {{$data->links()}}
+                    {{$data->links('vendor.pagination.bootstrap-4')}}
                 </div>
             </div>
         </div>

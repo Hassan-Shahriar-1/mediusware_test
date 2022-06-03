@@ -9,6 +9,9 @@ use App\Models\Variant;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 class ProductController extends Controller
 {
     
@@ -20,15 +23,33 @@ class ProductController extends Controller
     public function index()
     {
         
-            $data=Product::paginate(3);
-            
-            
-            //echo $data;
-            //$product_price=ProductVariantPrice::select("*", DB::raw("count(*) as user_count"))->groupBy('product_id')->get();
-            //dd($product_price);
-            //return response()->json([$data->variant,'data'=>$product_price]);
-        
+            $data_all=Product::all();
+            foreach($data_all as $key=>$val){
+                foreach($val['price'] as $vkey=>$vval){
+                    $name1=ProductVariant::select('variant')->where('id',$vval['product_variant_one'])->first();
+                    $name2=ProductVariant::select('variant')->where('id',$vval['product_variant_two'])->first();
+                    $name3=ProductVariant::select('variant')->where('id',$vval['product_variant_three'])->first();
+                    $name=$name1['variant'].'/'.$name2['variant'].'/'.$name3['variant'];
+                    $dd[]=['name'=>$name,'price'=>$vval['price'],'stock'=>$vval['stock']];
+                }
+                //dd($dd);
+                $data[]=['id'=>$val['id'],'title'=>$val['title'],'created_at'=>$val['created_at'],'sku'=>$val['sku'],'description'=>$val['description'],'grp'=>$dd];
+                $dd=[];
+            }
+           // dd($data);
+
+            $data=$this->paginate($data,3);  
+            $data->setPath('/product');
+           // dd($data);              
             return view('products.index',compact('data'));
+    }
+
+    public function paginate($items, $perPage = 5, $page = null, $options = [])
+    {
+        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+        $items = $items instanceof Collection ? $items : Collection::make($items);
+      //  dd($items);
+        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
     }
 
     /**

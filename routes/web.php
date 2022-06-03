@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('product', 'ProductController');
     Route::resource('blog', 'BlogController');
     Route::resource('blog-category', 'BlogCategoryController');
+    Route::get('/filter','my_product@filter_product');
     
 });
 //Route::get('/product/list','Controller@listofdata');
